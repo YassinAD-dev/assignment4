@@ -1,22 +1,28 @@
-//assigment 4
-
-// declaring the objects
-
+// declaring the object coin
 Coin coin;
 
-// the background color and window size
+
 void setup() {
   size(600, 400);
-      background(37, 31, 61);
-    
-    ellipse(400, 190 , 300 , 300);
-    fill(68, 11, 171);
-    
-    // creating the object for the coin spritesheet
-  coin = new Coin("Coin.png");
+  // creating an instance to the coin sprite sheet
+  coin = new Coin("Coin.png", 7, 64, 64, width/2 - 64, 130);
 }
-// refreshing in deafult for the animation (still woking on manging the sprite to do animation)
+
+
 void draw() {
-  background(50);
-  coin.display(width/2, height/2);
+  background(40, 120, 200);
+  //  methods to makeing the coin objet  to change the sprite sheet 
+  coin.update();
+
+  coin.display();
+
+
+  textSize(30);
+  text(coin.getResultMessage(), width/2, 330);
+}
+// pressing the space key to activate the coin spin
+void keyPressed() {
+  if (key == ' ') {
+    coin.startFlip();
+  }
 }
