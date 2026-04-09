@@ -1,47 +1,62 @@
 class Coin {
-// declaring the pimage object 
+
   PImage sheet;
-  // declaring an array of Pimage object
   PImage[] frames;
-// the amount frame timer for the sprite
+
   int frameCount;
   int frameW, frameH;
 
   int currentFrame = 0;
-// posioning the images
-  float x, y;
+
+  PVector pos;        // manging the position
+  PVector vel;        //  manging the velocity
+  PVector centerPos;  //  knwoing the original position
+
   float displayW = 128;
   float displayH = 128;
-// to indecate to see if the animation is going or not
+
   boolean flipping = false;
   int flipTimer = 0;
 
   String resultMessage = "";
-// its the constructor to create the coin object
+
+  int state = 0; // 0 neutral, 1 = win, -1=  lose ensuring the win and lose conditions
+
   Coin(String filename, int frameCount, int frameW, int frameH, float x, float y) {
 
     this.frameCount = frameCount;
     this.frameW = frameW;
     this.frameH = frameH;
-    this.x = x;
-    this.y = y;
-// creating the object 'sheet" " (Pimage
+
+    pos = new PVector(x, y);
+    centerPos = new PVector(x, y);
+
+    vel = new PVector(0, 0);
+
     sheet = loadImage(filename);
-//  creating an aray with frame count size
     frames = new PImage[frameCount];
 
-  // storing the images of size of frameW and frameH  in the array
     for (int i = 0; i < frameCount; i++) {
       frames[i] = sheet.get(i * frameW, 0, frameW, frameH);
     }
   }
-  
-// chaning thr sheet every 5 frames per second 
+
   void update() {
+
+    // movement of the coin while spinning
+    pos.add(vel);
+
+    // friction to slow down the movement
+    vel.mult(0.95);
+
+    // animation flip
     if (flipping) {
       flipTimer++;
 
-      
+      // random little movement while flipping
+      vel.x += random(-0.3, 0.3);
+      vel.y += random(-0.3, 0.3);
+
       if (flipTimer % 5 == 0) {
         currentFrame++;
 
@@ -50,37 +65,54 @@ class Coin {
         }
       }
 
-      
       if (flipTimer > 60) {
         flipping = false;
         decideResult();
       }
+    } 
+    else {
+      // when not flipping, go back slowly to center
+      pos.lerp(centerPos, 0.05);
     }
   }
-// displaying the right sheet at the current frame
+
   void display() {
-    image(frames[currentFrame], x, y, displayW, displayH);
+    imageMode(CENTER);
+    image(frames[currentFrame], pos.x, pos.y, displayW, displayH);
+    imageMode(CORNER);
   }
-//  everytime you press space bar you clear the reasults, making the boolean = true ( starts the animation )
+
   void startFlip() {
+    if (flipping) return;
+
     flipping = true;
     flipTimer = 0;
     resultMessage = "";
+    state = 0;
+
+    // start with a small random push
+    vel = new PVector(random(-2, 2), random(-2, 2));
   }
-// it picks randomly 1 or 0 , if its 0 it shows win condition, if its 1 it shows the lose condition
+
   void decideResult() {
     int r = (int)random(2);
 
     if (r == 0) {
       resultMessage = "HEAD - YOU WIN!";
       currentFrame = 0;
+      state = 1;
     } else {
       resultMessage = "TAIL - YOU LOSE!";
       currentFrame = 4;
+      state = -1;
     }
   }
 
   String getResultMessage() {
     return resultMessage;
+  }
+
+  int getState() {
+    return state;
   }
 }

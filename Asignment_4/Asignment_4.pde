@@ -1,28 +1,20 @@
-// declaring the object coin
-Coin coin;
-
+// (cotatopm) I did get help with my tutor in the sense of practicing with the code and then I would try and implment it on my own take, he did also provide a tiny bit of debugging when I tried a lot of things but they didn't work well, other than that I did a lot ony my own with the correct balance of guidance and self testing.
+ 
+ 
+ Game game;
 
 void setup() {
   size(600, 400);
-  // creating an instance to the coin sprite sheet
-  coin = new Coin("Coin.png", 7, 64, 64, width/2 - 64, 130);
+  game = new Game();
 }
-
 
 void draw() {
-  background(40, 120, 200);
-  //  methods to makeing the coin objet  to change the sprite sheet 
-  coin.update();
-
-  coin.display();
-
-
-  textSize(30);
-  text(coin.getResultMessage(), width/2, 330);
+  game.update();
+  game.display();
 }
-// pressing the space key to activate the coin spin
+
 void keyPressed() {
   if (key == ' ') {
-    coin.startFlip();
+    game.flipCoin();
   }
 }
